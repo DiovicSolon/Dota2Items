@@ -725,6 +725,14 @@
         </div>
     </div>
     <section id="home" class="hero">
+        <audio id="bgMusic">
+            <source src="images/lakad.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        
+        <button id="playAudioBtn" onclick="playAudio()" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; background: red; color: white; border: none; cursor: pointer;">
+            🔊 Play Sound
+        </button>
         <div class="hero-content">
             <div class="hero-header">
                 <h1><i class="fas fa-crown"></i> Welcome to Dota 2 Item Shop</h1>
@@ -958,6 +966,23 @@
             alert('Message sent successfully!');
             this.reset();
         });
+
+        function playAudio() {
+        let audio = document.getElementById("bgMusic");
+        audio.volume = 0.5;  // Adjust volume if needed
+        audio.play().then(() => {
+            document.getElementById("playAudioBtn").style.display = "none"; // Hide button after play
+        }).catch(error => console.log("Autoplay blocked:", error));
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        let audio = document.getElementById("bgMusic");
+
+        // Try playing on load (some browsers may block this)
+        audio.play().catch(() => {
+            console.log("Autoplay blocked! Waiting for user interaction.");
+        });
+    });
     </script>
 </body>
 </html>
