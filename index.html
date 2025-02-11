@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dota 2 Items Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            background-color: #0f0f0f;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .featured-section {
+    padding: 4rem 2rem;
+    position: relative;
+    background: #1a1a1a;
+    overflow: hidden;
+}
+
+.featured-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.featured-title h2 {
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.featured-title h2::before {
+    content: '';
+    position: absolute;
+    width: 120%;
+    height: 4px;
+    bottom: -10px;
+    left: -10%;
+    background: linear-gradient(90deg, 
+        transparent,
+        #ff0000,
+        #00ff00,
+        #0000ff,
+        transparent
+    );
+    animation: rgbBorder 3s linear infinite;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.featured-card {
+    background: rgba(45, 45, 45, 0.9);
+    border-radius: 15px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.featured-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 0, 0, 0.1),
+        rgba(0, 255, 0, 0.1),
+        rgba(0, 0, 255, 0.1),
+        transparent
+    );
+    animation: cardBg 6s linear infinite;
+    z-index: 0;
+}
+
+.featured-card::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    background: rgba(45, 45, 45, 0.95);
+    border-radius: 15px;
+    z-index: 1;
+}
+
+.card-content {
+    position: relative;
+    z-index: 2;
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    color: #ff4444;
+    margin-bottom: 1rem;
+    animation: pulse 2s infinite;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.card-description {
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.card-stats {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    color: #ff4444;
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #888;
+}
+
+@keyframes rgbBorder {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+@keyframes cardBg {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.featured-card:hover {
+    transform: translateY(-10px);
+}
+
+.featured-card:hover .card-icon {
+    animation: pulse 1s infinite;
+}
+
+    
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            color: #ff4444;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #ff4444;
+        }
+
+        .login-btn {
+            background-color: #ff4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #2d2d2d;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1rem;
+            color: #ff4444;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        /* Home section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('images/dota2-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ff4444;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Section styles */
+        .section-title {
+            text-align: center;
+            padding: 2rem;
+            color: #ff4444;
+        }
+
+        /* Slider styles */
+        .slider-container {
+            position: relative;
+            max-width: 800px;
+            margin: 2rem auto;
+            overflow: hidden;
+        }
+
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            min-width: 100%;
+            padding: 1rem;
+            text-align: center;
+            background-color: #2d2d2d;
+        }
+
+        .slide img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .slide img:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .slide img.clicked {
+            animation: clickEffect 0.5s ease-in-out;
+        }
+
+        @keyframes clickEffect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3) rotate(10deg); }
+            100% { transform: scale(1); }
+        }
+
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 1rem;
+            cursor: pointer;
+        }
+
+        .prev {
+            left: 0;
+        }
+
+        .next {
+            right: 0;
+        }
+
+        /* Grid styles */
+        .grid-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        
+.hero-content {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.hero-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.hero-header h1 {
+    font-size: 3rem;
+    color: #ff4444;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+}
+
+.hero-header i {
+    margin-right: 10px;
+}
+
+.hero-header p {
+    font-size: 1.2rem;
+    color: #ffffff;
+}
+
+.hero-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.hero-image {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.hero-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.hero-image img:hover {
+    transform: scale(1.05);
+}
+.hero-details {
+    background-color: rgba(25, 25, 25, 0.9);
+    padding: 2rem;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1;
+}
+
+.hero-details::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 20%,
+        rgba(255, 0, 0, 0.1) 30%,
+        rgba(0, 0, 255, 0.1) 40%,
+        rgba(0, 255, 0, 0.1) 50%,
+        transparent 60%
+    );
+    z-index: -1;
+    animation: rgbMove 8s linear infinite;
+    filter: blur(20px);
+}
+
+.hero-details::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(25, 25, 25, 0.95);
+    z-index: -1;
+}
+
+@keyframes rgbMove {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Optional: Add this if you want a subtle pulse effect on hover */
+.hero-details:hover::before {
+    animation: rgbMove 4s linear infinite;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    color: #ff4444;
+    margin-bottom: 1rem;
+}
+
+.hero-title i {
+    margin-right: 10px;
+}
+
+.hero-subtitle {
+    color: #ffffff;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.hero-lore {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.lore-icon {
+    position: absolute;
+    left: 0;
+    top: 5px;
+    color: #ff4444;
+}
+
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-box {
+    background: rgba(23, 19, 19, 0.1);
+    padding: 1rem;
+    border-radius: 5px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+}
+
+.stat-box i {
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+}
+
+.stat-box h4 {
+    color: #1ebe26;
+    margin-bottom: 0.5rem;
+}
+
+.attributes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.attribute-tag {
+    background: rgba(255, 68, 68, 0.2);
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.attribute-tag:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 68, 68, 0.3);
+}
+
+.attribute-tag i {
+    font-size: 0.8rem;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .hero-main {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero-header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 2rem 1rem;
+    }
+    
+    .hero-header h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .item-card {
+            background-color: #2d2d2d;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .item-card img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .item-card img:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .item-card img.clicked {
+            animation: clickEffect 0.5s ease-in-out;
+        }
+
+        .price {
+            color: #ffd700;
+            margin-top: 0.5rem;
+        }
+
+        /* Contact section */
+        .contact-section {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #2d2d2d;
+            border-radius: 8px;
+        }
+
+        .contact-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        .contact-form button {
+            background-color: #ff4444;
+            color: white;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .hero-image {
+    margin-top: 2rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-image img {
+    width: 500px;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.hero-image img:hover {
+    transform: scale(1.05);
+}
+
+/* Update hero section height to accommodate the image */
+.hero {
+    min-height: 700px;
+    height: auto;
+    padding: 4rem 2rem;
+}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-logo">DOTA 2 SHOP</div>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#featured">Featured</a>
+                <a href="#items">All Items</a>
+                <a href="#contact">Contact</a>
+                <button class="login-btn" onclick="showModal()">Login</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+        </div>
+    </div>
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <h1><i class="fas fa-crown"></i> Welcome to Dota 2 Item Shop</h1>
+                <p>Discover powerful artifacts to dominate the battlefield</p>
+            </div>
+            
+            <div class="hero-main">
+                <div class="hero-image">
+                    <img src="images/invoker.gif" alt="Invoker">
+                </div>
+                
+                <div class="hero-details">
+                    <h2 class="hero-title"><i class="fas fa-magic"></i> Invoker</h2>
+                    <p class="hero-subtitle">Weaves magic with an array of spell combos</p>
+                    
+                    <div class="hero-lore">
+                        <i class="fas fa-book-open lore-icon"></i>
+                        <p>In its earliest, and some would say most potent form, magic was primarily the art of memory. It required no technology, no wands or appurtenances other than the mind of the magician...</p>
+                    </div>
+                    
+                    <div class="hero-stats">
+                        <div class="stat-box">
+                            <i class="fas fa-hand-rock"></i>
+                            <h4>Attack</h4>
+                            <p>538 (+2.4)</p>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Defense</h4>
+                            <p>303 (+0.9)</p>
+                        </div>
+                        <div class="stat-box">
+                            <i class="fas fa-star"></i>
+                            <h4>Ability</h4>
+                            <p>19 (+4.0)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="attributes">
+                        <span class="attribute-tag"><i class="fas fa-fist-raised"></i> Carry</span>
+                        <span class="attribute-tag"><i class="fas fa-bolt"></i> Nuker</span>
+                        <span class="attribute-tag"><i class="fas fa-hand-rock"></i> Disabler</span>
+                        <span class="attribute-tag"><i class="fas fa-running"></i> Escape</span>
+                        <span class="attribute-tag"><i class="fas fa-tower-observation"></i> Pusher</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="featured" class="featured-section">
+        <div class="featured-title">
+            <h2><i class="fas fa-star"></i> Featured Items</h2>
+        </div>
+        
+        <div class="featured-grid">
+            <!-- Card 1 -->
+            <div class="featured-card">
+                <div class="card-content">
+                    <i class="fas fa-crown card-icon"></i>
+                    <h3 class="card-title">Divine Rapier</h3>
+                    <p class="card-description">A powerful artifact that grants immense damage but drops upon death. Only the bravest heroes dare to wield it.</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <div class="stat-value">+330</div>
+                            <div class="stat-label">Damage</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">6000</div>
+                            <div class="stat-label">Gold</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Card 2 -->
+            <div class="featured-card">
+                <div class="card-content">
+                    <i class="fas fa-heart card-icon"></i>
+                    <h3 class="card-title">Heart of Tarrasque</h3>
+                    <p class="card-description">Provides incredible health regeneration and strength. A favorite among tanky heroes.</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <div class="stat-value">+500</div>
+                            <div class="stat-label">Health</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">5200</div>
+                            <div class="stat-label">Gold</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Card 3 -->
+            <div class="featured-card">
+                <div class="card-content">
+                    <i class="fas fa-bolt card-icon"></i>
+                    <h3 class="card-title">Dagon</h3>
+                    <p class="card-description">Unleash a powerful burst of magical damage. Can be upgraded multiple times for increased power.</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <div class="stat-value">400-800</div>
+                            <div class="stat-label">Magic Damage</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">2700+</div>
+                            <div class="stat-label">Gold</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <!-- All Items Section -->
+    <section id="items">
+        <h2 class="section-title">All Items</h2>
+        <div class="grid-container">
+            <div class="items-grid">
+                <div class="item-card">
+                    <img src="images/deso.jpg" alt="Desolator">
+                    <h3>Desolator</h3>
+                    <p class="price">3500 gold</p>
+                </div>
+                <div class="item-card">
+                    <img src="images/daedalus.webp" alt="Daedalus">
+                    <h3>Daedalus</h3>
+                    <p class="price">5150 gold</p>
+                </div>
+                <div class="item-card">
+                    <img src="images/heart.jpg" alt="Heart of Tarrasque">
+                    <h3>Heart of Tarrasque</h3>
+                    <p class="price">5000 gold</p>
+                </div>
+                <div class="item-card">
+                    <img src="images/buterflh.webp" alt="Butterfly">
+                    <h3>Butterfly</h3>
+                    <p class="price">5275 gold</p>
+                </div>
+                <div class="item-card">
+                    <img src="images/mkb.png" alt="Monkey King Bar">
+                    <h3>Monkey King Bar</h3>
+                    <p class="price">4975 gold</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <h2 class="section-title">Contact Us</h2>
+        <form class="contact-form">
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea rows="5" placeholder="Your Message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+
+    <script>
+        // Slider functionality
+        const slider = document.querySelector('.slider');
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.querySelector('.prev');
+        const nextBtn = document.querySelector('.next');
+        let currentSlide = 0;
+
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlider();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            updateSlider();
+        }
+
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+
+        // Auto advance slides
+        setInterval(nextSlide, 5000);
+
+        // Add click animation to all images
+        document.querySelectorAll('img').forEach(img => {
+            img.addEventListener('click', function() {
+                this.classList.add('clicked');
+                setTimeout(() => {
+                    this.classList.remove('clicked');
+                }, 500);
+            });
+        });
+
+        // Login Modal Functions    
+        function showModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('loginModal')) {
+                document.getElementById('loginModal').style.display = 'none';
+            }
+        }
+
+        // Login Form Handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Static login check
+            if(email === 'diovic@gmail.com' && password === '123456') {
+                alert('Login successful!');
+                document.getElementById('loginModal').style.display = 'none';
+                document.querySelector('.login-btn').textContent = 'Welcome, Diovic';
+            } else {
+                alert('Invalid credentials. Please try again.');
+            }
+        });
+
+        // Contact Form Handler
+        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Message sent successfully!');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

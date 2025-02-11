@@ -1,0 +1,16 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin-top: 50px;
+}
+
+.icon-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.icon-container img {
+    width: 100px;
+    height: 100px;
+}
